@@ -23,7 +23,7 @@ export default function Steps() {
       y.value = acceleration.y;
       z.value = acceleration.z;
       const change = Math.sqrt(
-        acceleration.x ** 2 + acceleration.y ** 2 + acceleration.z ** 2,
+        acceleration.x ** 2 + acceleration.y ** 2 + (acceleration.z - 9.8) ** 2,
       );
       const threshold = 3; // 感度調整
       if (change > threshold) {
