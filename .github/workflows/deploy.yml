@@ -27,7 +27,7 @@ jobs:
           deno-version: v2.x
 
       - name: Run tests
-        run: deno test --allow-env
+        run: deno test --allow-env --allow-read
 
       - name: Build step
         run: "deno task build"
