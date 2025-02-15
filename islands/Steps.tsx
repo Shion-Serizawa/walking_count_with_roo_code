@@ -3,6 +3,9 @@ import { useEffect } from "preact/hooks";
 
 export default function Steps() {
   const steps = useSignal(0);
+  const x = useSignal(0);
+  const y = useSignal(0);
+  const z = useSignal(0);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -16,6 +19,9 @@ export default function Steps() {
   const handleDeviceMotion = (event: DeviceMotionEvent) => {
     const acceleration = event.accelerationIncludingGravity;
     if (acceleration && acceleration.x !== null && acceleration.y !== null && acceleration.z !== null) {
+      x.value = acceleration.x;
+      y.value = acceleration.y;
+      z.value = acceleration.z;
       const change = Math.sqrt(
         acceleration.x ** 2 + acceleration.y ** 2 + acceleration.z ** 2,
       );
@@ -29,6 +35,9 @@ export default function Steps() {
   return (
     <div>
       <h1>歩数: {steps.value}</h1>
+      <p>X: {x.value}</p>
+      <p>Y: {y.value}</p>
+      <p>Z: {z.value}</p>
     </div>
   );
 }
