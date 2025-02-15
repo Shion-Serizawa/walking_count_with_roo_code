@@ -1,3 +1,4 @@
+- https://seri-walking-count.deno.dev/
 # Fresh project
 
 Your new Fresh project is ready to go. You can follow the Fresh "Getting
