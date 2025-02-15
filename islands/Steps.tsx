@@ -10,13 +10,15 @@ export default function Steps() {
   const isCounting = useSignal(false);
   const lastStepTime = useRef(0);
   const [showAcceleration, setShowAcceleration] = useState(false);
+  const [sensitivity, setSensitivity] = useState(2.0); // 感度調整
+  const [notificationInterval, setNotificationInterval] = useState(10); // 通知間隔
+  const [stepCorrection, setStepCorrection] = useState(1.0); // 歩数補正
 
   const alpha = 0.8; // ローパスフィルタの係数
   const prevFilteredX = useRef(0);
   const prevFilteredY = useRef(0);
   const prevFilteredZ = useRef(0);
 
-  const threshold = 1.0;
   const minStepInterval = 300;
 
   useEffect(() => {
@@ -50,7 +52,7 @@ export default function Steps() {
 
       // ステップ検出判定
       const currentTime = Date.now();
-      if (currentDelta > threshold && currentTime - lastStepTime.current > minStepInterval && !isCounting.value) {
+      if (currentDelta > sensitivity && currentTime - lastStepTime.current > minStepInterval && !isCounting.value) {
         steps.value = steps.value + 1;
         lastStepTime.current = currentTime;
         isCounting.value = true;
@@ -83,6 +85,54 @@ export default function Steps() {
           <p>Delta: {delta.value.toFixed(2)}</p>
         </>
       )}
+      <div>
+        <h2>感度調整</h2>
+        <input
+          type="range"
+          min="2.0"
+          max="5.0"
+          step="0.1"
+          value={sensitivity}
+          onChange={(e) => {
+            if (e.target instanceof HTMLInputElement) {
+              setSensitivity(parseFloat(e.target.value));
+            }
+          }}
+        />
+        <p>感度: {sensitivity.toFixed(1)}</p>
+      </div>
+      <div>
+        <h2>通知間隔</h2>
+        <select
+          value={notificationInterval}
+          onChange={(e) => {
+            if (e.target instanceof HTMLSelectElement) {
+              setNotificationInterval(parseInt(e.target.value));
+            }
+          }}
+        >
+          <option value="5">5歩ごと</option>
+          <option value="10">10歩ごと</option>
+          <option value="20">20歩ごと</option>
+        </select>
+        <p>通知間隔: {notificationInterval}歩ごと</p>
+      </div>
+      <div>
+        <h2>歩数補正</h2>
+        <input
+          type="range"
+          min="0.5"
+          max="1.5"
+          step="0.1"
+          value={stepCorrection}
+          onChange={(e) => {
+            if (e.target instanceof HTMLInputElement) {
+              setStepCorrection(parseFloat(e.target.value));
+            }
+          }}
+        />
+        <p>歩数補正: {stepCorrection.toFixed(1)}</p>
+      </div>
     </div>
   );
 }
