@@ -1,11 +1,16 @@
 import { useSignal } from "@preact/signals";
-import { useEffect } from "preact/hooks";
+import { useEffect, useRef } from "preact/hooks";
 
 export default function Steps() {
   const steps = useSignal(0);
   const x = useSignal(0);
   const y = useSignal(0);
   const z = useSignal(0);
+
+  const alpha = 0.8; // ローパスフィルタの係数
+  const prevX = useRef(0);
+  const prevY = useRef(0);
+  const prevZ = useRef(0);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -19,14 +24,23 @@ export default function Steps() {
   const handleDeviceMotion = (event: DeviceMotionEvent) => {
     const acceleration = event.accelerationIncludingGravity;
     if (acceleration && acceleration.x !== null && acceleration.y !== null && acceleration.z !== null) {
-      const threshold = 1; // 感度調整
-      const changeX = Math.abs(acceleration.x);
-      const changeY = Math.abs(acceleration.y - 0.3);
-      const changeZ = Math.abs(acceleration.z - 9.8);
+      // ローパスフィルタを適用
+      const filteredX = alpha * prevX.current + (1 - alpha) * acceleration.x;
+      const filteredY = alpha * prevY.current + (1 - alpha) * acceleration.y;
+      const filteredZ = alpha * prevZ.current + (1 - alpha) * acceleration.z;
 
-      x.value = acceleration.x;
-      y.value = acceleration.y;
-      z.value = acceleration.z;
+      x.value = filteredX;
+      y.value = filteredY;
+      z.value = filteredZ;
+
+      prevX.current = filteredX;
+      prevY.current = filteredY;
+      prevZ.current = filteredZ;
+
+      const threshold = 0.5;
+      const changeX = Math.abs(filteredX - prevX.current);
+      const changeY = Math.abs(filteredY - prevY.current);
+      const changeZ = Math.abs(filteredZ - prevZ.current);
 
       if (changeX > threshold || changeY > threshold || changeZ > threshold) {
         steps.value = steps.value + 1;
