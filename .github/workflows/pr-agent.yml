@@ -20,6 +20,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CONFIG.MODEL: "gemini/gemini-2.0-flash-exp"
           CONFIG.FALLBACK_MODELS: '["gemini/gemini-2.0-flash-exp"]'
+          # pr_descriptionにおいてPRのタイトルも自動生成する
+          pr_description.generate_ai_title: true 
           # pr_descriptionにおける追加プロンプト
           pr_description.extra_instructions: "回答は**必ず全て日本語**で記述してください。" 
           # pr_reviewにおける追加プロンプト
