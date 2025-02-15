@@ -19,14 +19,16 @@ export default function Steps() {
   const handleDeviceMotion = (event: DeviceMotionEvent) => {
     const acceleration = event.accelerationIncludingGravity;
     if (acceleration && acceleration.x !== null && acceleration.y !== null && acceleration.z !== null) {
+      const threshold = 1; // 感度調整
+      const changeX = Math.abs(acceleration.x);
+      const changeY = Math.abs(acceleration.y - 0.3);
+      const changeZ = Math.abs(acceleration.z - 9.8);
+
       x.value = acceleration.x;
       y.value = acceleration.y;
       z.value = acceleration.z;
-      const change = Math.sqrt(
-        acceleration.x ** 2 + acceleration.y ** 2 + (acceleration.z - 9.8) ** 2,
-      );
-      const threshold = 3; // 感度調整
-      if (change > threshold) {
+
+      if (changeX > threshold || changeY > threshold || changeZ > threshold) {
         steps.value = steps.value + 1;
       }
     }
