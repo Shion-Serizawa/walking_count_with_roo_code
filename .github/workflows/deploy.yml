@@ -1,9 +1,12 @@
 name: Deploy
+
 on:
   push:
-    branches: master
+    branches:
+      - master
   pull_request:
-    branches: master
+    branches:
+      - master
 
 jobs:
   deploy:
@@ -15,13 +18,16 @@ jobs:
       contents: read # Needed to clone the repository
 
     steps:
-      - name: Clone repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Install Deno
         uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
+
+      - name: Run tests
+        run: deno test
 
       - name: Build step
         run: "deno task build"
@@ -32,5 +38,3 @@ jobs:
           project: "seri-walking-count"
           entrypoint: "main.ts"
           root: "."
-          
-          
