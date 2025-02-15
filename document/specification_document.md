@@ -15,7 +15,7 @@
     - サーバーサイドレンダリング（SSR）とIslands Architectureにより、動的かつ高速なユーザー体験を提供
 - **ブラウザAPI：**
   - **DeviceMotionEvent**  
-    - 加速度センサーのデータ取得（accelerationIncludingGravity）
+    - 加速度センサーのデータ取得
   - **SpeechSynthesis API**  
     - 音声フィードバック（歩数通知）
   - **Vibration API**  
@@ -36,13 +36,14 @@
   スマホの加速度センサーを用いて歩数を計測し、リアルタイムで歩数を表示するページ。
 
 - **主な機能：**
-  - **歩数カウントアルゴリズム：**
-    - 一定間隔（200ms）で加速度の変化量を計算  
-      - 変化量は：  
-        $$
-        \text{change} = \sqrt{(ΔX)^2 + (ΔY)^2 + (ΔZ)^2}
-        $$
-    - 調整可能な**感度（閾値）**を設定し、変化量がこの値を超えた場合に歩数カウント
+  - **歩数カウントアルゴリズム（改善版）：**
+    - サンプリング間隔：200ms
+    - ローパスフィルタ適用後の加速度変化量を計算
+    - 変化量の計算：  
+      $$
+      \text{delta} = \sqrt{(\text{filteredX} - \text{prevFilteredX})^2 + (\text{filteredY} - \text{prevFilteredY})^2 + (\text{filteredZ} - \text{prevFilteredZ})^2}
+      $$
+    - 閾値（threshold）を超え、かつ**一定時間（300ms）以内の連続カウントを防止**するデバウンス処理を追加
     - ユーザー毎のセンサー特性に対応するため、**歩数補正係数**を適用可能
 
   - **フィードバック機能：**
