@@ -94,14 +94,15 @@ export default function Steps() {
         if (Math.floor(correctedSteps) > 0 && Math.floor(correctedSteps) % notificationIntervalRef.current === 0) {
           if (typeof window !== "undefined" && "speechSynthesis" in window) {
             const utterance = new SpeechSynthesisUtterance(
-              `${notificationIntervalRef.current} 歩達成`,
+              `${correctedSteps} 歩`,
             );
             speechSynthesis.speak(utterance);
           }
-          if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-            // 振動フィードバック（※HTTPS環境で動作する点に注意）
-            navigator.vibrate([200]);
-          }
+          // よくわからんので，封印
+          // if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+          //   // 振動フィードバック（※HTTPS環境で動作する点に注意）
+          //   navigator.vibrate([200]);
+          // }
         }
       }
 
