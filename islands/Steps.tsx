@@ -14,6 +14,35 @@ export default function Steps() {
   const [notificationInterval, setNotificationInterval] = useState(10); // 通知間隔
   const [stepCorrection, setStepCorrection] = useState(1.0); // 歩数補正
 
+  // 最新の状態を反映させるための ref を用意
+  const sensitivityRef = useRef(sensitivity);
+  const notificationIntervalRef = useRef(notificationInterval);
+  const stepCorrectionRef = useRef(stepCorrection);
+
+  useEffect(() => {
+    sensitivityRef.current = sensitivity;
+  }, [sensitivity]);
+
+  useEffect(() => {
+    notificationIntervalRef.current = notificationInterval;
+  }, [notificationInterval]);
+
+  useEffect(() => {
+    stepCorrectionRef.current = stepCorrection;
+  }, [stepCorrection]);
+
+  // ユーザーのタップで音声フィードバックを有効にする
+  useEffect(() => {
+    const activateAudio = () => {
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        speechSynthesis.resume();
+        document.removeEventListener("click", activateAudio);
+      }
+    };
+    document.addEventListener("click", activateAudio);
+    return () => document.removeEventListener("click", activateAudio);
+  }, []);
+
   const alpha = 0.8; // ローパスフィルタの係数
   const prevFilteredX = useRef(0);
   const prevFilteredY = useRef(0);
@@ -52,13 +81,29 @@ export default function Steps() {
 
       // ステップ検出判定
       const currentTime = Date.now();
-      if (currentDelta > sensitivity && currentTime - lastStepTime.current > minStepInterval && !isCounting.value) {
-        steps.value = steps.value + 1;
+      if (currentDelta > sensitivityRef.current && currentTime - lastStepTime.current > minStepInterval && !isCounting.value) {
+        const correctedSteps = steps.value + stepCorrectionRef.current;
+        steps.value = correctedSteps;
         lastStepTime.current = currentTime;
         isCounting.value = true;
         setTimeout(() => {
           isCounting.value = false;
         }, minStepInterval);
+
+        // 通知間隔ごとにフィードバックを実行
+        if (Math.floor(correctedSteps) > 0 && Math.floor(correctedSteps) % notificationIntervalRef.current === 0) {
+          if (typeof window !== "undefined" && "speechSynthesis" in window) {
+            const utterance = new SpeechSynthesisUtterance(
+              `${correctedSteps} 歩`,
+            );
+            speechSynthesis.speak(utterance);
+          }
+          // よくわからんので，封印
+          // if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+          //   // 振動フィードバック（※HTTPS環境で動作する点に注意）
+          //   navigator.vibrate([200]);
+          // }
+        }
       }
 
       prevFilteredX.current = filteredX;
