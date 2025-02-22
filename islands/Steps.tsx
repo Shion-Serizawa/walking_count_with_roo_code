@@ -14,12 +14,12 @@ export default function Steps() {
   const [notificationInterval, setNotificationInterval] = useState(10); // 通知間隔
   const [stepCorrection, setStepCorrection] = useState(1.0); // 歩数補正
 
-  const alpha = 0.8; // ローパスフィルタの係数
+  const alpha = 0.2; // ローパスフィルタの係数
   const prevFilteredX = useRef(0);
   const prevFilteredY = useRef(0);
   const prevFilteredZ = useRef(0);
 
-  const minStepInterval = 300;
+  const minStepInterval = 100;
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -52,7 +52,7 @@ export default function Steps() {
 
       // ステップ検出判定
       const currentTime = Date.now();
-      if (currentDelta > sensitivity && currentTime - lastStepTime.current > minStepInterval && !isCounting.value) {
+      if (currentDelta > sensitivity && currentTime - lastStepTime.current > minStepInterval /*&& !isCounting.value*/) {
         steps.value = steps.value + 1;
         lastStepTime.current = currentTime;
         isCounting.value = true;
