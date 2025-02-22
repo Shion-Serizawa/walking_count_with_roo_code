@@ -53,12 +53,26 @@ export default function Steps() {
       // ステップ検出判定
       const currentTime = Date.now();
       if (currentDelta > sensitivity && currentTime - lastStepTime.current > minStepInterval && !isCounting.value) {
-        steps.value = steps.value + 1;
+        const correctedSteps = steps.value + stepCorrection;
+        steps.value = correctedSteps;
         lastStepTime.current = currentTime;
         isCounting.value = true;
         setTimeout(() => {
           isCounting.value = false;
         }, minStepInterval);
+
+        // フィードバック
+        if (Math.floor(correctedSteps) % notificationInterval === 0) {
+          if (typeof window !== "undefined" && "speechSynthesis" in window) {
+            const utterance = new SpeechSynthesisUtterance(
+              `${notificationInterval} 歩達成`,
+            );
+            speechSynthesis.speak(utterance);
+          }
+          if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+            navigator.vibrate(200);
+          }
+        }
       }
 
       prevFilteredX.current = filteredX;
