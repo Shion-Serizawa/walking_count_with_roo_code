@@ -70,7 +70,7 @@ export default function Steps() {
             speechSynthesis.speak(utterance);
           }
           if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-            navigator.vibrate(200);
+            navigator.vibrate([200]); // 振動パターンを指定
           }
         }
       }
