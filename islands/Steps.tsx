@@ -89,9 +89,9 @@ export default function Steps() {
         <h2>感度調整</h2>
         <input
           type="range"
-          min="2.0"
+          min="0"
           max="5.0"
-          step="0.1"
+          step="0.5"
           value={sensitivity}
           onChange={(e) => {
             if (e.target instanceof HTMLInputElement) {
