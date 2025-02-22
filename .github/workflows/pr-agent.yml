@@ -18,8 +18,8 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CONFIG.MODEL: "gemini/gemini-2.0-flash-exp"
-          CONFIG.FALLBACK_MODELS: '["gemini/gemini-2.0-flash-exp"]'
+          CONFIG.MODEL: "gemini/gemini-2.0-flash"
+          CONFIG.FALLBACK_MODELS: '["gemini/gemini-2.0-flash"]'
           # pr_descriptionにおいてPRのタイトルも自動生成する
           pr_description.generate_ai_title: true 
           # pr_descriptionにおける追加プロンプト
